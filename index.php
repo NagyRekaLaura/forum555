@@ -6,6 +6,7 @@
     } else {
         $topics = [];
     }
+    $time = date("H:i:s");
 
     if (isset($_POST['action'])) {
 
@@ -20,24 +21,30 @@
             #endregion
             array_push($topics,
             (object)[
-              "id" => $lastId + 1,
-              "name" => $_POST['topic']
+                "id" => $lastId + 1,
+                "name" => $_POST['topic'],
+                "time" => $time,
             ]
             );
             $JsonString = json_encode($topics,JSON_PRETTY_PRINT);
             file_put_contents($fileName,$JsonString);
         }
         # Téma törlése
-        elseif (($_POST['action'] == 'delete')) {
+        elseif (($_POST['action'] == 'delete')) 
+             if (isset($_POST['check'])) {
             $id = $_POST['id'];
             foreach ($topics as $key => $topic) {
                 if ($topic->id == $id) break;
             }
+        
             array_splice($topics,$key,1);
             $JsonString = json_encode($topics,JSON_PRETTY_PRINT);
             file_put_contents($fileName,$JsonString);
+             }else{
+            echo "nem lehet törölni!";
         }
-    
+        
+        
     }
 
 ?>
@@ -53,14 +60,16 @@
     <ol>
     <?php
             foreach ($topics as $value) {
-            echo '<li>' . $value->name . '
+            echo '<li>' . $value->name . ' ' . $value->time . '
             <form method="post">
-            <input type="hidden" name="id" value="' . $value->id . '">
+            <input type="hidden" name="id" value="' . $value->id .'"> 
             <input type="hidden" name="action" value="delete">
+            <input type="checkbox" name="check">
             <input type="submit" value="Törlés">
             </form>';
 
         }
+        
     ?>
     </ol>
     <form method="POST">

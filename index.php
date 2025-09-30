@@ -6,7 +6,10 @@
     } else {
         $topics = [];
     }
-    $time = date("H:i:s");
+     if (isset($_GET['valami'])) {
+
+    }
+    $time = date("Y-m-d H:i:s");
 
     if (isset($_POST['action'])) {
 
@@ -56,26 +59,57 @@
     <title>Forum</title>
 </head>
 <body>
-    <h1>Témák:</h1>
-    <ol>
     <?php
+    if (!isset($_GET['topicID'])) {
+echo ' <h1>Témák:</h1>
+        <ol>';
+    
             foreach ($topics as $value) {
-            echo '<li>' . $value->name . ' ' . $value->time . '
+            
+            echo '<li><a href="index.php?topicID=' . $value->id . '">'. $value->name . '</a>' . $value->time .' <br><br>
             <form method="post">
-            <input type="hidden" name="id" value="' . $value->id .'"> 
+            <input type="hidden" name="id" value="' . $value->id . '">
             <input type="hidden" name="action" value="delete">
             <input type="checkbox" name="check">
             <input type="submit" value="Törlés">
+
             </form>';
 
         }
-        
+        echo '</ol>';
+    } else {
+        $id = $_GET['topicID'];
+        foreach ($topics as $key => $topic) {
+            if($topic->id == $id) break;
+        }
+        $topic = $topics[$key];
+        print_r($topic);
+        echo '<a href=index.php>Vissza a témákhoz</a>';
+    }
     ?>
-    </ol>
+
+    
     <form method="POST">
         <input type="hidden" name="action" value="add">
         <input type="text" name="topic">
         <input type="submit" value="Add">
+        
+    </form>
+
+    <h1>GET Form</h1>
+    <?php
+
+if (isset($_GET['valami'])) {
+  echo "Az utolsó kapott érték: ".$_GET['valami'];        
+}
+
+    ?>
+    <form method="GET">
+        <input type="text" name="valami" id="" placeholder="Név...">
+        <br>
+        <br>
+        <textarea name="" id="" placeholder="Ossza meg a gondolatait...." cols="70" rows="8"></textarea>
+        <input type="submit" value="Küld">
     </form>
 </body>
 </html>
